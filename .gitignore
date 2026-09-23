@@ -1,0 +1,8 @@
+# Build and dependency files
+node_modules
+dist
+
+# Environment and lock files
+.env
+package-lock.json
+yarn.lock
