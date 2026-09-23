@@ -1,7 +1,9 @@
 const amqp = require('amqplib');
 const { getRabbitMqUrl } = require('./rabbitmq');
 
-async function sendTask(message = 'Hello from Node.js!') {
+async function sendTask(payload = {}) {
+	// JSON-encode non-string payloads so objects can be sent as-is.
+	const message = JSON.stringify(payload);
 	try {
 		// Resolve the broker URL from the environment before establishing a connection.
 		console.log('[Producer] Connecting to RabbitMQ...');
@@ -29,8 +31,7 @@ async function sendTask(message = 'Hello from Node.js!') {
 
 		// The routing key must match the consumer's binding for the message to arrive.
 		// Persistent messages can survive a broker restart when the queue is durable.
-		const routingKey =
-			process.env.RABBITMQ_ROUTING_KEY || 'online';
+		const routingKey = process.env.RABBITMQ_ROUTING_KEY || 'online';
 		channel.publish(exchangeName, routingKey, Buffer.from(message), {
 			persistent: true,
 		});

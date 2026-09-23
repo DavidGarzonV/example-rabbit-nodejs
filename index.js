@@ -19,12 +19,18 @@ async function main() {
   if (mode === 'consumer') {
     await receiveTasks();
   } else if (mode === 'producer') {
-    await sendTask('Hello from automated index trigger!');
+    await sendTask({
+      routingKey: process.env.RABBITMQ_ROUTING_KEY,
+      message: 'Test message triggered from index!'
+    });
   } else if (mode === 'both') {
     // Start a one-shot consumer first so its queue binding exists before publishing.
     await receiveTasks({ closeAfterMessage: true });
     setTimeout(async () => {
-      await sendTask('Test message triggered from index!');
+      await sendTask({
+        routingKey: process.env.RABBITMQ_ROUTING_KEY,
+        message: 'Test message triggered from index!'
+      });
     }, 2000);
   }
 }

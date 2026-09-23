@@ -47,7 +47,15 @@ async function receiveTasks({ closeAfterMessage = false } = {}) {
 			queue,
 			async (msg) => {
 				if (msg !== null) {
-					console.log(`[x] Message received: "${msg.content.toString()}"`);
+					const content = msg.content.toString();
+					// Try to parse as JSON; fall back to the raw string if it isn't JSON.
+					let payload;
+					try {
+						payload = JSON.parse(content);
+					} catch {
+						payload = content;
+					}
+					console.log('[x] Message received:', payload);
 					// Acknowledge successful processing so RabbitMQ removes the message.
 					channel.ack(msg);
 
