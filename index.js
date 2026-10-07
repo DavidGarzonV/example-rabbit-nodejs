@@ -33,10 +33,13 @@ async function main() {
 		// Start a one-shot consumer first so its queue binding exists before publishing.
 		await receiveTasks({ closeAfterMessage: true });
 		setTimeout(async () => {
-			await sendTask({
-				routingKey: process.env.RABBITMQ_ROUTING_KEY,
-				message: 'Test message triggered from index!',
-			});
+			await sendTask(process.env.RABBITMQ_MESSAGE_PAYLOAD
+				? JSON.parse(process.env.RABBITMQ_MESSAGE_PAYLOAD)
+				: {
+						routingKey: process.env.RABBITMQ_ROUTING_KEY,
+						message: 'Test message triggered from index!',
+					},
+			);
 		}, 2000);
 	}
 }
