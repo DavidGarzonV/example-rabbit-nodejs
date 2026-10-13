@@ -1,5 +1,16 @@
 # RabbitMQ Architecture Guide: When to Use Queues, Exchanges, Routing Keys, and Virtual Hosts
 
+## ID token header
+
+When `JWT_HEADER_NAME`, `JWT_PAYLOAD`, and `JWT_HEADER` are set in the
+environment, the producer generates a JWT in the RabbitMQ message header named
+by `JWT_HEADER_NAME` (for example, `id-token`). `JWT_PAYLOAD` and `JWT_HEADER`
+must contain valid JSON. If any of the three variables is missing or empty, no
+token is generated; other headers from `RABBITMQ_MESSAGE_HEADERS` are
+preserved. The signature uses HS256 and expires after five minutes. The
+included signing secret is for testing only and must be replaced before using
+this setup outside a test environment.
+
 This guide explains the core components of RabbitMQ (Exchanges, Queues, Routing Keys, and Virtual Hosts) and provides best practices on when and how to use them based on architectural needs.
 
 ---

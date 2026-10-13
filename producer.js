@@ -1,5 +1,6 @@
 const amqp = require('amqplib');
 const { getRabbitMqUrl } = require('./rabbitmq');
+const { generateToken } = require('./token');
 
 async function sendTask(payload = {}) {
 	// JSON-encode non-string payloads so objects can be sent as-is.
@@ -32,8 +33,17 @@ async function sendTask(payload = {}) {
 		// The routing key must match the consumer's binding for the message to arrive.
 		// Persistent messages can survive a broker restart when the queue is durable.
 		const routingKey = process.env.RABBITMQ_ROUTING_KEY || 'online';
+		const headers = process.env.RABBITMQ_MESSAGE_HEADERS
+			? JSON.parse(process.env.RABBITMQ_MESSAGE_HEADERS)
+			: {};
+		const tokenHeaderName = process.env.JWT_HEADER_NAME;
+		const token = generateToken(tokenHeaderName);
+		if (token) {
+			headers[tokenHeaderName] = token;
+		}
 		channel.publish(exchangeName, routingKey, Buffer.from(message), {
 			persistent: true,
+			headers,
 		});
 		console.log(`[x] Message sent: "${message}"`);
 
