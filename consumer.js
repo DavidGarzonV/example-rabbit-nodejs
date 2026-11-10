@@ -19,15 +19,15 @@ async function receiveTasks({ closeAfterMessage = false } = {}) {
 
 		// Declare a durable queue so RabbitMQ keeps it after a broker restart.
 		// If it already exists, RabbitMQ verifies that its settings match.
-		await channel.assertQueue(queue, {
-			durable: true,
-			arguments: { 'x-queue-type': queueType },
-		});
+		// await channel.assertQueue(queue, {
+		// 	durable: true,
+		// 	arguments: { 'x-queue-type': queueType },
+		// });
 
 		// Messages are published to the exchange, not directly to the queue.
 		// Both producer and consumer must use the same exchange configuration.
 		const exchangeName = process.env.RABBITMQ_EXCHANGE || 'status';
-		await channel.assertExchange(exchangeName, 'topic', { durable: true });
+		// await channel.assertExchange(exchangeName, 'topic', { durable: true });
 
 		// Bind the queue to the routing key used by the producer. Only messages
 		// matching this pattern will be delivered to this queue.

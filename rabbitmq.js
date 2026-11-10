@@ -8,10 +8,15 @@ function getRabbitMqUrl() {
 			: `${protocol}://${configuredUrl}`,
 	);
 
-		// Force the selected protocol even when RABBITMQ_URL already contains one.
+	// Force the selected protocol even when RABBITMQ_URL already contains one.
 	url.protocol = protocol + ':';
 
-		// Credentials are optional; when provided, URL handles the required escaping.
+	// Set the port if provided through the environment variable.
+	if (process.env.RABBITMQ_PORT) {
+		url.port = process.env.RABBITMQ_PORT;
+	}
+
+	// Credentials are optional; when provided, URL handles the required escaping.
 	if (process.env.RABBITMQ_USER) {
 		url.username = process.env.RABBITMQ_USER;
 	}
